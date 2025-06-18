@@ -53,7 +53,7 @@
         </form>
     </div>
 
-    <div class="experience-grid mt-4">
+    <!-- <div class="experience-grid mt-4">
         <div class="experience-card">
             <div class="experience-card-body">
                 <div class="experience-direct-actions">
@@ -81,7 +81,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> -->
 </div>
 
 <style>
