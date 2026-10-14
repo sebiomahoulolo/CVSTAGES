@@ -21,6 +21,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role',
     ];
 
     /**
@@ -44,5 +45,26 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function cvProfil()
+    {
+        return $this->hasOne(CvProfil::class);
+    }
+
+    public function cvDownloads()
+    {
+        return $this->hasMany(CvDownload::class);
+    }
+
+    public function abonnement()
+    {
+        return $this->hasOne(Abonnement::class);
+    }
+
+    public function estAbonneActif()
+    {
+        $abonnement = $this->abonnement;
+        return $abonnement && $abonnement->estActif();
     }
 }

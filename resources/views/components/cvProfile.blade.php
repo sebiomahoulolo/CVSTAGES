@@ -1,110 +1,263 @@
 <div class="form-section">
 
-    <form class="profile-form">
-
-
+@if(isset($cvProfile) && $cvProfile)
+    <!-- Mode lecture seule -->
+    <div id="profile-readonly-section">
+        <div class="row profile-form-row">
+            <div class="col-md-6 form-group">
+                <label class="form-label">Nom Complet</label>
+                <div>{{ $cvProfile->username }}</div>
+            </div>
+            <div class="col-md-6 form-group">
+                <label class="form-label">Fonction</label>
+                <div>{{ $cvProfile->title }}</div>
+            </div>
+        </div>
+        <div class="row profile-form-row">
+            <div class="col-md-6 form-group">
+                <label class="form-label">Email contact (CV)</label>
+                <div>{{ $cvProfile->email }}</div>
+            </div>
+            <div class="col-md-6 form-group">
+                <label class="form-label">Téléphone (CV)</label>
+                <div>{{ $cvProfile->phone }}</div>
+            </div>
+        </div>
+        <div class="row profile-form-row">
+            <div class="col-md-6 form-group">
+                <label class="form-label">Adresse / Ville</label>
+                <div>{{ $cvProfile->city }}</div>
+            </div>
+            <div class="col-md-6 form-group">
+                <label class="form-label">URL LinkedIn</label>
+                <div>{{ $cvProfile->url_linkedin }}</div>
+            </div>
+        </div>
+        <div class="row profile-form-row">
+            <div class="col-md-6 form-group">
+                <label class="form-label">URL Portfolio/Site/GitHub</label>
+                <div>{{ $cvProfile->url_portfolio }}</div>
+            </div>
+            <div class="col-md-6 form-group">
+                <label class="form-label">Photo CV</label>
+                @if($cvProfile->photo)
+                    <div><img src="{{ asset('cv/' . $cvProfile->photo) }}" alt="Photo actuelle" style="max-width:80px; max-height:80px;"></div>
+                @else
+                    <div>-</div>
+                @endif
+            </div>
+        </div>
+        <div class="row profile-form-row">
+            <div class="col-md-6 form-group">
+                <label class="form-label">Situation Matrimoniale</label>
+                <div>{{ $cvProfile->situation_mat }}</div>
+            </div>
+            <div class="col-md-6 form-group">
+                <label class="form-label">Nationalité</label>
+                <div>{{ $cvProfile->nationality }}</div>
+            </div>
+        </div>
+        <div class="row profile-form-row">
+            <div class="col-md-6 form-group">
+                <label class="form-label">Date de Naissance</label>
+                <div>{{ $cvProfile->birthday }}</div>
+            </div>
+            <div class="col-md-6 form-group">
+                <label class="form-label">Lieu de Naissance</label>
+                <div>{{ $cvProfile->lieu_naissance }}</div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Résumé du Profil</label>
+            <div>{{ $cvProfile->resume }}</div>
+        </div>
+        <button type="button" class="btn btn-outline-primary btn-sm" id="show-edit-profile-btn">Modifier</button>
+    </div>
+    <!-- Formulaire d'édition masqué par défaut -->
+    <div id="edit-profile-form-section" style="display:none; margin-top: 2rem;">
+        <form class="profile-form" method="POST" action="{{ route('cv-profils.update', $cvProfile->id) }}" enctype="multipart/form-data">
+            @csrf
+            @method('PUT')
+            <div class="row profile-form-row">
+                <div class="col-md-6 form-group">
+                    <label class="form-label">Nom Complet <span class="text-danger fw-bold">*</span></label>
+                    <input type="text" id="profile_nom_complet" name="username" class="form-control" required value="{{ old('username', $cvProfile->username ?? '') }}">
+                </div>
+                <div class="col-md-6 form-group">
+                    <label for="profile_titre" class="form-label">Fonction <span style="color:red">*</span></label>
+                    <input type="text" id="profile_titre" name="title" class="form-control" required value="{{ old('title', $cvProfile->title ?? '') }}">
+                </div>
+            </div>
+            <div class="row profile-form-row">
+                <div class="col-md-6 form-group">
+                    <label for="profile_email" class="form-label">Email contact (CV) <span class="text-danger fw-bold">*</span></label>
+                    <input type="email" id="profile_email" name="email" class="form-control" value="{{ old('email', $cvProfile->email ?? '') }}" placeholder="Par défaut: john.doe@example.com">
+                </div>
+                <div class="col-md-6 form-group">
+                    <label for="profile_telephone" class="form-label">Téléphone (CV) <span class="text-danger fw-bold">*</span></label>
+                    <input type="tel" id="profile_telephone" name="phone" class="form-control" value="{{ old('phone', $cvProfile->phone ?? '') }}" placeholder="Par défaut: +33 6 12 34 56 78">
+                </div>
+            </div>
+            <div class="row profile-form-row">
+                <div class="col-md-6 form-group">
+                    <label for="profile_adresse" class="form-label">Adresse / Ville <span class="text-danger fw-bold">*</span></label>
+                    <input type="text" id="profile_adresse" name="city" class="form-control" value="{{ old('city', $cvProfile->city ?? '') }}">
+                </div>
+                <div class="col-md-6 form-group">
+                    <label for="profile_linkedin" class="form-label">URL LinkedIn</label>
+                    <input type="url" id="profile_linkedin" name="url_linkedin" class="form-control" value="{{ old('url_linkedin', $cvProfile->url_linkedin ?? '') }}" placeholder="https://linkedin.com/in/...">
+                </div>
+            </div>
+            <div class="row profile-form-row">
+                <div class="col-md-6 form-group">
+                    <label for="profile_portfolio" class="form-label">URL Portfolio/Site/GitHub</label>
+                    <input type="url" id="profile_portfolio" name="url_portfolio" class="form-control" value="{{ old('url_portfolio', $cvProfile->url_portfolio ?? '') }}" placeholder="https://votresite.com">
+                </div>
+                <div class="col-md-6 form-group">
+                    <label for="profile_photo_cv" class="form-label">Photo CV (Max 2Mo)</label>
+                    <input type="file" id="profile_photo_cv" name="photo" class="form-control" accept="image/png, image/jpeg, image/jpg">
+                    @if($cvProfile->photo)
+                        <div style="margin-top: 10px;"><img src="{{ asset('cv/' . $cvProfile->photo) }}" alt="Photo actuelle" style="max-width:80px; max-height:80px;"></div>
+@endif
+                </div>
+            </div>
+            <div class="row profile-form-row">
+                <div class="col-md-6 form-group">
+                    <label for="profile_sit_mat" class="form-label">Situation Matrimoniale <span class="text-danger fw-bold">*</span></label>
+                    <select id="profile_sit_mat" name="situation_mat" class="form-control" required>
+                        <option value="">-- Choisir --</option>
+                        <option value="Célibataire" @if(old('situation_mat', $cvProfile->situation_mat ?? '')=='Célibataire') selected @endif>Célibataire</option>
+                        <option value="Marié(e)" @if(old('situation_mat', $cvProfile->situation_mat ?? '')=='Marié(e)') selected @endif>Marié(e)</option>
+                        <option value="Divorcé(e)" @if(old('situation_mat', $cvProfile->situation_mat ?? '')=='Divorcé(e)') selected @endif>Divorcé(e)</option>
+                        <option value="Veuf(ve)" @if(old('situation_mat', $cvProfile->situation_mat ?? '')=='Veuf(ve)') selected @endif>Veuf(ve)</option>
+                        <option value="Autre" @if(old('situation_mat', $cvProfile->situation_mat ?? '')=='Autre') selected @endif>Autre</option>
+                    </select>
+                </div>
+                <div class="col-md-6 form-group">
+                    <label for="profile_nationalite" class="form-label">Nationalité <span class="text-danger fw-bold">*</span></label>
+                    <input type="text" id="profile_nationalite" name="nationality" class="form-control" value="{{ old('nationality', $cvProfile->nationality ?? '') }}" required>
+                </div>
+            </div>
+            <div class="row profile-form-row">
+                <div class="col-md-6 form-group">
+                    <label for="profile_date_nais" class="form-label">Date de Naissance <span class="text-danger fw-bold">*</span></label>
+                    <input type="date" id="profile_date_nais" name="birthday" class="form-control" value="{{ old('birthday', $cvProfile->birthday ?? '') }}" required>
+                </div>
+                <div class="col-md-6 form-group">
+                    <label for="profile_lieu_nais" class="form-label">Lieu de Naissance <span class="text-danger fw-bold">*</span></label>
+                    <input type="text" id="profile_lieu_nais" name="lieu_naissance" class="form-control" value="{{ old('lieu_naissance', $cvProfile->lieu_naissance ?? '') }}" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="resume_profil_textarea" class="form-label">Résumé du Profil <span class="text-danger fw-bold">*</span></label>
+                <textarea id="profile_resume" name="resume" class="form-control" rows="5" placeholder="Décrivez brièvement votre objectif professionnel, vos points forts...">{{ old('resume', $cvProfile->resume ?? '') }}</textarea>
+            </div>
+            <button type="submit" class="btn btn-primary btn-sm" id="save_profile">
+                <i class="fas fa-save"></i> <span>Enregistrer</span>
+            </button>
+           </form>
+    </div>
+@else
+    <!-- Formulaire d'ajout si aucun profil -->
+    <form class="profile-form" method="POST" action="{{ route('cvprofils.store') }}" enctype="multipart/form-data">
+        @csrf
         <div class="row profile-form-row">
             <div class="col-md-6 form-group">
                 <label class="form-label">Nom Complet <span class="text-danger fw-bold">*</span></label>
-                <input type="text" id="profile_nom_complet" class="form-control" value="John Doe" required>
+                <input type="text" id="profile_nom_complet" name="username" class="form-control" required value="{{ old('username') }}">
             </div>
             <div class="col-md-6 form-group">
-                <label for="profile_titre" class="form-label">Titre Profil CV <span style="color:red">*</span></label>
-                <input type="text" id="profile_titre" class="form-control" value="Développeur Full Stack" required>
-            </div>
-        </div>
-        <div class="row profile-form-row">
-            <div class="col-md-6 form-group">
-                <label for="profile_email" class="form-label">Email contact (CV) <span
-                        class="text-danger fw-bold">*</span></label>
-                <input type="email" id="profile_email" class="form-control" value="john.doe@example.com"
-                    placeholder="Par défaut: john.doe@example.com">
-            </div>
-            <div class="col-md-6 form-group">
-                <label for="profile_telephone" class="form-label">Téléphone (CV) <span
-                        class="text-danger fw-bold">*</span></label>
-                <input type="tel" id="profile_telephone" class="form-control" value="+33 6 12 34 56 78"
-                    placeholder="Par défaut: +33 6 12 34 56 78">
+                <label for="profile_titre" class="form-label">Fonction <span style="color:red">*</span></label>
+                <input type="text" id="profile_titre" name="title" class="form-control" required value="{{ old('title') }}">
             </div>
         </div>
         <div class="row profile-form-row">
             <div class="col-md-6 form-group">
-                <label for="profile_adresse" class="form-label">Adresse / Ville <span
-                        class="text-danger fw-bold">*</span></label>
-                <input type="text" id="profile_adresse" class="form-control" value="123 Rue de la Paix, Paris, France">
+                <label for="profile_email" class="form-label">Email contact (CV) <span class="text-danger fw-bold">*</span></label>
+                <input type="email" id="profile_email" name="email" class="form-control" value="{{ old('email') }}" placeholder="Par défaut: john.doe@example.com">
+            </div>
+            <div class="col-md-6 form-group">
+                <label for="profile_telephone" class="form-label">Téléphone (CV) <span class="text-danger fw-bold">*</span></label>
+                <input type="tel" id="profile_telephone" name="phone" class="form-control" value="{{ old('phone') }}" placeholder="Par défaut: +33 6 12 34 56 78">
+            </div>
+        </div>
+        <div class="row profile-form-row">
+            <div class="col-md-6 form-group">
+                <label for="profile_adresse" class="form-label">Adresse / Ville <span class="text-danger fw-bold">*</span></label>
+                <input type="text" id="profile_adresse" name="city" class="form-control" value="{{ old('city') }}">
             </div>
             <div class="col-md-6 form-group">
                 <label for="profile_linkedin" class="form-label">URL LinkedIn</label>
-                <input type="url" id="profile_linkedin" class="form-control" value="https://linkedin.com/in/johndoe"
-                    placeholder="https://linkedin.com/in/...">
+                <input type="url" id="profile_linkedin" name="url_linkedin" class="form-control" value="{{ old('url_linkedin') }}" placeholder="https://linkedin.com/in/...">
             </div>
         </div>
         <div class="row profile-form-row">
             <div class="col-md-6 form-group">
                 <label for="profile_portfolio" class="form-label">URL Portfolio/Site/GitHub</label>
-                <input type="url" id="profile_portfolio" class="form-control" placeholder="https://votresite.com" value="https://votresite.com">
+                <input type="url" id="profile_portfolio" name="url_portfolio" class="form-control" value="{{ old('url_portfolio') }}" placeholder="https://votresite.com">
             </div>
             <div class="col-md-6 form-group">
                 <label for="profile_photo_cv" class="form-label">Photo CV (Max 2Mo)</label>
-                <input type="file" id="profile_photo_cv" class="form-control"
-                    accept="image/png, image/jpeg, image/jpg">
-                <div style="font-size: 0.8em; color: var(--primary-color); margin-top: 5px;">Téléversement...</div>
-                <div style="margin-top: 10px;">
-                    <div
-                        style="width: 60px; height: 60px; border-radius: 50%; background-color: #e0e0e0; display:flex; align-items:center; justify-content:center; color: #aaa;">
-                        <i class="fas fa-user fa-2x"></i>
-                    </div>
-                </div>
+                <input type="file" id="profile_photo_cv" name="photo" class="form-control" accept="image/png, image/jpeg, image/jpg">
             </div>
         </div>
-
         <div class="row profile-form-row">
             <div class="col-md-6 form-group">
-                <label for="profile_sit_mat" class="form-label">Situation Matrimoniale <span
-                        class="text-danger fw-bold">*</span></label>
-                <select id="profile_sit_mat" class="form-control" required>
+                <label for="profile_sit_mat" class="form-label">Situation Matrimoniale <span class="text-danger fw-bold">*</span></label>
+                 <select id="profile_sit_mat" name="situation_mat" class="form-control" required>
                     <option value="">-- Choisir --</option>
-                    <option value="Célibataire">Célibataire</option>
-                    <option value="Marié(e)">Marié(e)</option>
-                    <option value="Divorcé(e)">Divorcé(e)</option>
-                    <option value="Veuf(ve)">Veuf(ve)</option>
-                    <option value="Autre">Autre</option>
+                    <option value="Célibataire" @if(old('situation_mat')=='Célibataire') selected @endif>Célibataire</option>
+                    <option value="Marié(e)" @if(old('situation_mat')=='Marié(e)') selected @endif>Marié(e)</option>
+                    <option value="Divorcé(e)" @if(old('situation_mat')=='Divorcé(e)') selected @endif>Divorcé(e)</option>
+                    <option value="Veuf(ve)" @if(old('situation_mat')=='Veuf(ve)') selected @endif>Veuf(ve)</option>
+                    <option value="Autre" @if(old('situation_mat')=='Autre') selected @endif>Autre</option>
                 </select>
             </div>
             <div class="col-md-6 form-group">
-                <label for="profile_nationalite" class="form-label">Nationalité <span
-                        class="text-danger fw-bold">*</span></label>
-                <input type="text" id="profile_nationalite" class="form-control" value="Beninois" required>
+                <label for="profile_nationalite" class="form-label">Nationalité <span class="text-danger fw-bold">*</span></label>
+                <input type="text" id="profile_nationalite" name="nationality" class="form-control" value="{{ old('nationality') }}" required>
             </div>
         </div>
         <div class="row profile-form-row">
             <div class="col-md-6 form-group">
-                <label for="profile_date_nais" class="form-label">Date de Naissance <span
-                        class="text-danger fw-bold">*</span></label>
-                <input type="date" id="profile_date_nais" class="form-control" value="1990-01-01" required>
+                <label for="profile_date_nais" class="form-label">Date de Naissance <span class="text-danger fw-bold">*</span></label>
+                <input type="date" id="profile_date_nais" name="birthday" class="form-control" value="{{ old('birthday') }}" required>
             </div>
             <div class="col-md-6 form-group">
-                <label for="profile_lieu_nais" class="form-label">Lieu de Naissance <span
-                        class="text-danger fw-bold">*</span></label>
-                <input type="text" id="profile_lieu_nais" class="form-control" value="Cotonou, Bénin" required>
+                <label for="profile_lieu_nais" class="form-label">Lieu de Naissance <span class="text-danger fw-bold">*</span></label>
+                <input type="text" id="profile_lieu_nais" name="lieu_naissance" class="form-control" value="{{ old('lieu_naissance') }}" required>
             </div>
         </div>
-
         <div class="form-group">
-            <label for="resume_profil_textarea" class="form-label">Résumé du Profil <span
-                    class="text-danger fw-bold">*</span></label>
-            <textarea id="resume_profil_textarea" class="form-control" rows="5" 
-                placeholder="Décrivez brièvement votre objectif professionnel, vos points forts...">
-                Développeur passionné avec 5 ans d'expérience dans le développement web. Expert en JavaScript, React et PHP/Laravel.
-            </textarea>
+            <label for="resume_profil_textarea" class="form-label">Résumé du Profil <span class="text-danger fw-bold">*</span></label>
+            <textarea id="profile_resume" name="resume" class="form-control" rows="5" placeholder="Décrivez brièvement votre objectif professionnel, vos points forts...">{{ old('resume') }}</textarea>
         </div>
-
-        {{-- <button type="button" class="btn btn-primary btn-sm" id="save_profile">
-            <i class="fas fa-save"></i> <span>Enregistrer</span>
-        </button> --}}
+     <button type="submit" class="btn btn-primary btn-sm" id="save_profile">
+    <i class="fas fa-save"></i> <span>Enregistrer</span>
+</button>
     </form>
+@endif
 </div>
-
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var showEditBtn = document.getElementById('show-edit-profile-btn');
+    var editFormSection = document.getElementById('edit-profile-form-section');
+    var cancelEditBtn = document.getElementById('cancel-edit-profile-btn');
+    var readOnlySection = document.getElementById('profile-readonly-section');
+    if(showEditBtn && editFormSection && readOnlySection) {
+        showEditBtn.addEventListener('click', function() {
+            editFormSection.style.display = 'block';
+            readOnlySection.style.display = 'none';
+        });
+    }
+    if(cancelEditBtn && editFormSection && readOnlySection) {
+        cancelEditBtn.addEventListener('click', function() {
+            editFormSection.style.display = 'none';
+            readOnlySection.style.display = 'block';
+        });
+    }
+});
+</script>
 
 <style>
     .form-section {

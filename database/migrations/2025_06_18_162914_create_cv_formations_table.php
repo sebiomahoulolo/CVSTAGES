@@ -17,10 +17,9 @@ return new class extends Migration
             $table->string('diplome');
             $table->string('etablissement');
             $table->string('ville')->nullable();
-            $table->string('date_debut')->nullable();
-            $table->string('date_fin')->nullable();
+            $table->string('annee_debut');
+            $table->string('annee_fin')->nullable();
             $table->text('description')->nullable();
-            $table->boolean('is_current')->default(false);
             $table->timestamps();
         });
     }

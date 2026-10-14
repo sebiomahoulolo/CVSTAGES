@@ -35,4 +35,9 @@ return [
         ],
     ],
 
+
+    'fedapay' => [
+        'secret' => env('FEDAPAY_SECRET_KEY'),
+    ],
+
 ];
